@@ -1,4 +1,5 @@
 package com.crk.library.model;
+import jakarta.validation.constraints.NotBlank;
 
 import com.crk.library.interfaces.Borrowable;
 
@@ -6,7 +7,11 @@ public class Book implements Borrowable {
 
     // Encapsulation (Private Fields)
     private int bookId;
+
+    @NotBlank(message = "Title cannot be empty")
     private String title;
+
+    @NotBlank(message = "Author cannot be empty")
     private String author;
 
     // Constructor
@@ -59,4 +64,9 @@ public class Book implements Borrowable {
         System.out.println("Title   : " + title);
         System.out.println("Author  : " + author);
     }
+    @Override
+    public String toString() {
+        return title;
+    }
+
 }

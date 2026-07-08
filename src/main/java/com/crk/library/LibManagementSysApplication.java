@@ -1,9 +1,7 @@
 package com.crk.library;
 
 import com.crk.library.model.Book;
-import com.crk.library.model.Faculty;
-import com.crk.library.model.LibraryMember;
-import com.crk.library.model.Student;
+import com.crk.library.repository.GenericRepository;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,23 +13,39 @@ public class LibManagementSysApplication {
 
         SpringApplication.run(LibManagementSysApplication.class, args);
 
-        Book javaBook = new Book(101, "Java Programming", "James Gosling");
+        GenericRepository<Book> repository = new GenericRepository<>();
 
-        LibraryMember student = new Student(1, "Kavi", "CSE");
-        LibraryMember faculty = new Faculty(2, "Ramesh", "IT");
+        Book book1 = new Book(101, "Java Programming", "James Gosling");
+        Book book2 = new Book(102, "Spring Boot", "Craig Walls");
+        Book book3 = new Book(103, "Data Structures", "Mark Allen");
 
-        System.out.println("\n========== BOOK DETAILS ==========");
-        javaBook.displayBook();
+        repository.save(101, book1);
+        repository.save(102, book2);
+        repository.save(103, book3);
 
-        System.out.println("\n========== BORROW ==========");
-        javaBook.borrowBook();
+        System.out.println("===== ALL BOOKS =====");
 
-        System.out.println("\n========== MEMBERS ==========");
-        student.displayDetails();
-        System.out.println();
-        faculty.displayDetails();
+        for (Book book : repository.findAll()) {
+            book.displayBook();
+            System.out.println();
+        }
 
-        System.out.println("\n========== RETURN ==========");
-        javaBook.returnBook();
+        System.out.println("===== SEARCH BOOK =====");
+
+        Book found = repository.findById(102);
+
+        if (found != null) {
+            found.displayBook();
+        }
+
+        System.out.println("\n===== ALL IDS =====");
+
+        for (Integer id : repository.getAllIds()) {
+            System.out.println(id);
+        }
+
+        repository.delete(103);
+
+        System.out.println("\nBook with ID 103 deleted.");
     }
 }
