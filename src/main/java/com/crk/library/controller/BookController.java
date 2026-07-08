@@ -2,6 +2,7 @@ package com.crk.library.controller;
 
 import com.crk.library.model.Book;
 import com.crk.library.repository.BookRepository;
+import com.crk.library.exception.BookNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,11 @@ public class BookController {
     // Get book by ID
     @GetMapping("/{id}")
     public Book getBookById(@PathVariable int id) {
-        return repository.findById(id).orElse(null);
+
+        return repository.findById(id)
+                .orElseThrow(() ->
+                        new BookNotFoundException(
+                                "Book with ID " + id + " not found"));
     }
 
     // Search books by author (Custom JPQL)
