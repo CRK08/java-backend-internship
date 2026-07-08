@@ -1,11 +1,20 @@
 package com.crk.library.model;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 
 import com.crk.library.interfaces.Borrowable;
 
+@Entity
+@Table(name = "books")
 public class Book implements Borrowable {
 
     // Encapsulation (Private Fields)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int bookId;
 
     @NotBlank(message = "Title cannot be empty")
@@ -13,7 +22,8 @@ public class Book implements Borrowable {
 
     @NotBlank(message = "Author cannot be empty")
     private String author;
-
+    public Book() {
+    }
     // Constructor
     public Book(int bookId, String title, String author) {
         this.bookId = bookId;

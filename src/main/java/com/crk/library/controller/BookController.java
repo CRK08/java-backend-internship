@@ -1,69 +1,61 @@
 package com.crk.library.controller;
 
 import com.crk.library.model.Book;
+import com.crk.library.repository.BookRepository;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/books")
 @CrossOrigin(origins = "*")
 public class BookController {
 
-    private final Map<Integer, Book> books = new HashMap<>();
+    private final BookRepository repository;
 
-    public BookController() {
-        books.put(101, new Book(101, "Java Programming", "James Gosling"));
-        books.put(102, new Book(102, "Spring Boot", "Craig Walls"));
-        books.put(103, new Book(103, "Data Structures", "Mark Allen"));
+    public BookController(BookRepository repository) {
+        this.repository = repository;
     }
 
+    // Get all books
     @GetMapping
-    public Collection<Book> getAllBooks() {
-        return books.values();
+    public List<Book> getAllBooks() {
+        return repository.findAll();
     }
 
+    // Get book by ID
     @GetMapping("/{id}")
     public Book getBookById(@PathVariable int id) {
-        return books.get(id);
+        return repository.findById(id).orElse(null);
     }
 
-    @GetMapping("/search")
-    public Collection<Book> searchBook(
-            @RequestParam @NotBlank String title) {
-
-        List<Book> result = new ArrayList<>();
-
-        for (Book book : books.values()) {
-            if (book.getTitle().toLowerCase().contains(title.toLowerCase())) {
-                result.add(book);
-            }
-        }
-
-        return result;
+    // Search books by author (Custom JPQL)
+    @GetMapping("/author")
+    public List<Book> getBooksByAuthor(@RequestParam String author) {
+        return repository.findBooksByAuthor(author);
     }
 
+    // Add a new book
     @PostMapping
-    public String addBook(@Valid @RequestBody Book book) {
-        books.put(book.getBookId(), book);
-        return "Book Added Successfully";
+    public Book addBook(@Valid @RequestBody Book book) {
+        return repository.save(book);
     }
 
+    // Update an existing book
     @PutMapping("/{id}")
-    public String updateBook(@PathVariable int id,
-                             @Valid @RequestBody Book book) {
+    public Book updateBook(@PathVariable int id,
+                           @Valid @RequestBody Book book) {
 
-        books.put(id, book);
-        return "Book Updated Successfully";
+        book.setBookId(id);
+        return repository.save(book);
     }
 
+    // Delete a book
     @DeleteMapping("/{id}")
     public String deleteBook(@PathVariable int id) {
 
-        books.remove(id);
+        repository.deleteById(id);
         return "Book Deleted Successfully";
     }
-
 }
